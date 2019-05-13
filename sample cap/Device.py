@@ -2,9 +2,9 @@ import FeatureEngineering as fe
 
 class Device(object):
     def __init__(self):
-        self.packetinfos = []
-        self.features = []
+        self.packet_info = []
+        self.feature_data = []
 
-    def appendPacketinfo(self, packet):
+    def append_packet_info(self, packet):
         temp = fe.PacketInfo(packet)
-        self.packetinfos.append(temp)
+        self.packet_info.append(temp)

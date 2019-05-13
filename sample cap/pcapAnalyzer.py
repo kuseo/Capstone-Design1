@@ -12,19 +12,19 @@ if __name__ == "__main__":
         packet = {
             'size':value.length,
             'time':value.time,
-            'protocolName':value.protocol,
-            'dst':value.destination,
+            'protocol':value.protocol,
+            'destination':value.destination,
         }
         
         #only TCP, UDP, and HTTP protocol
-        if packet['protocolName'] != 'TCP' and  packet['protocolName'] != 'TCP' and packet['protocolName'] == 'TCP':
+        if packet['protocol'] != 'TCP' and  packet['protocol'] != 'UDP' and packet['protocol'] == 'HTTP':
             continue
             
         IP = value.source
         if IP in device:
-            device[IP].appendPacketinfo(packet)
+            device[IP].append_packet_info(packet)
         else:
             device[IP] = dv.Device()
-            device[IP].appendPacketinfo(packet)
+            device[IP].append_packet_info(packet)
 
-    print(device)
+    print(device['38.198.26.9'].packet_info[0].protocol)
