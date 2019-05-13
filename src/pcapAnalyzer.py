@@ -46,7 +46,7 @@ if __name__ == "__main__":
                 'bandwidth':0,
                 'endpoint':num_of_endpoint,
             }
-            # delta time
+            # delta time, get T1
             try:
                 parameters['T1'] = float(device[source_IP].packet_info[index].time) - float(device[source_IP].packet_info[index - 1].time)
             except IndexError:
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
             index = index + 1
         
-        # delta T1
+        # delta T1, get T2
         index = 0
         for value in device[source_IP].feature_data:
             try:
@@ -65,7 +65,7 @@ if __name__ == "__main__":
                 value.T2 = 0.0
             index = index + 1
 
-        # delta T2
+        # delta T2, get T3
         index = 0
         for value in device[source_IP].feature_data:
             try:
