@@ -7,7 +7,7 @@ one_hot_protocol = {'TCP':0, 'UDP':1, 'HTTP':2}
 
 if __name__ == "__main__":
     device = {} # group by source IP
-    cap = ps.FileCapture("UDPFlood Sample.pcap", only_summaries=True)
+    cap = ps.FileCapture("sample pcap/UDPFlood Sample.pcap", only_summaries=True)
 
     # fisrt, extract packet infomations
     for value in cap:
