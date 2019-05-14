@@ -1,5 +1,9 @@
 #%%
-#sample usage of pyshark
+"""
+import os
+WORKING_DIR = "C:\\Users\\tjrkd\\OneDrive\\바탕 화면\\Capstone-Design"
+os.chdir(WORKING_DIR + "\\src")
+"""
 
 import pyshark as ps
 import Device as dv
@@ -8,7 +12,7 @@ one_hot_protocol = {'TCP':0, 'UDP':1, 'HTTP':2}
 
 if __name__ == "__main__":
     device = {} # group by source IP
-    cap = ps.FileCapture("sample pcap/UDPFloocd Sample.pcap", only_summaries=True)
+    cap = ps.FileCapture("sample pcap\\UDPFlood Sample.pcap", only_summaries=True)
 
     # fisrt, extract packet infomations
     for value in cap:
