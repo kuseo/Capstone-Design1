@@ -6,6 +6,7 @@ os.chdir(WORKING_DIR + "\\src")
 """
 
 import pyshark as ps
+import h5py
 import Device as dv
 
 one_hot_protocol = {'TCP':0, 'UDP':1, 'HTTP':2}
@@ -71,16 +72,16 @@ if __name__ == "__main__":
         
             device[source_IP].append_feature_data(parameters)
             index = index + 1
-        # First 3 packets have abnormal feature data for T1, T2, T3 since  they are initialized to 0.0
-        # But our ANN will be robust. so It's OKay.
+        # First three packets have abnormal feature data for T1, T2, T3 since they can not be defined.
+        # So we'll gonna drop those three packets
     
     # Test : loop over all feature datas
     count_device = 0
-    count_feature_data = 0
+    count_feature_data = 2
     for source_IP in device:
         count_device = count_device + 1
         print(source_IP + " : ")
-        for value in device[source_IP].feature_data:
+        for value in device[source_IP].feature_data[3:]:
             count_feature_data = count_feature_data + 1
             print("\tpacket number " + str(count_feature_data) + ": " + str(value.size) + "\t" + str(value.T1)  + "\t" + str(value.T2) + "\t" + str(value.T3) + "\t" + str(value.protocol) + "\t" + str(value.bandwidth) + "\t" + str(value.endpoint))
     print(count_device, count_feature_data)
