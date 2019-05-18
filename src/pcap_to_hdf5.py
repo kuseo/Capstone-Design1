@@ -6,8 +6,8 @@ import Device as dv
 
 one_hot_protocol = {"TCP":0, "UDP":1, "HTTP":2}
 
-#%% parser
-parser = argparse.ArgumentParser(description="pcap to HDF5. You can use this program to generate data sets for either traing or prediction")
+#%% Argument parser
+parser = argparse.ArgumentParser(description="pcap to HDF5. You can use this program to generate data sets for either training or prediction")
 parser.add_argument("input", 
                     help="Input pcap file directory")
 
@@ -16,14 +16,19 @@ parser.add_argument("input",
 #pred       : predict
 parser.add_argument("-l", "--label", type=str, choices=["pos", "neg", "pred"],
                     help="Category of input pcap file. default is neg")
+parser.add_argument("-o", "--output", type=str, default="output.h5",
+                    help="Output h5 file")
+parser.add_argument("-v", "--verbose", action="store_true",
+                   help="Increase verbosity")
+
 
 args = parser.parse_args()
 
-#%%
+#%% Prepare some variables
 device = {} # group by source IP
 cap = ps.FileCapture(args.input, only_summaries=True)
 
-#%% fisrt, extract packet infomations
+#%% Fisrt, extract packet infomations
 for value in cap:
     # only TCP, UDP, and HTTP protocol
     if value.protocol != "TCP" and  value.protocol != "UDP" and value.protocol != "HTTP":
@@ -43,7 +48,7 @@ for value in cap:
         device[IP] = dv.Device()
         device[IP].append_packet_info(packet_info)
 
-#%% second, feature engineering
+#%% Second, feature engineering
 for source_IP in device:
     num_of_endpoint = device[source_IP].count_endpoint()
 
@@ -80,32 +85,39 @@ for source_IP in device:
     
         device[source_IP].append_feature_data(feature_data)
         index = index + 1
-    # First three packets have abnormal feature data for T1, T2, T3 since they can not be defined.
+    # The first three packets have abnormal feature data for T1, T2, T3 since they can not be defined.
     # So we'll gonna drop those three packets.
 
 #%% Store feature datas as HDF5 format
 if args.label == "pred":
-    with h5py.File("prediction.h5", "w") as f:
+    with h5py.File(args.output, "w") as f:
         # Loop over all feature datas and group by source IP
         for source_IP in device:
             packet_set = []
-            for value in device[source_IP].feature_data[3:]:
+            for value in device[source_IP].feature_data[3:]: # drop the first three packets
                 temp = list(value.values()) # dictionary to list
                 print(temp)
                 packet_set.append(temp)
             f.create_dataset(source_IP, data=packet_set)
 
 else:
-    with h5py.File('train_and_test.h5', 'w') as f:
+    with h5py.File(args.output, 'w') as f:
         packet_set = []
         label_set = []
         label = 1 if args.label == "pos" else 0
         # Loop over all feature datas
         for source_IP in device:
-            for value in device[source_IP].feature_data[3:]:
+            for value in device[source_IP].feature_data[3:]: # drop the first three packets
                 temp = list(value.values()) # dictionary to list
                 packet_set.append(temp)
                 label_set.append(label)
 
         f.create_dataset('packet', data=packet_set)
         f.create_dataset('label', data=label_set)
+
+#%% verbose output
+if args.verbose:
+    num_of_packet = 0
+    for source_IP in device:
+        num_of_packet = num_of_packet + len(device[source_IP].packet_info)
+    print("Done.\nTotal {} packets from {} devices.\nThe first three packets were dropped.".format(num_of_packet, len(device)))
