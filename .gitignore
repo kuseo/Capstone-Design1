@@ -6,7 +6,7 @@ bin-release/
 
 # Other files and folders
 .settings/
-src/__pycache__/*.*
+src/pcap to hdf5/__pycache__/*.*
 .vscode/*.*
 
 # Executables
