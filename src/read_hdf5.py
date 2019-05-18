@@ -1,6 +1,6 @@
 import h5py
 
-with h5py.File('prediction.h5', 'r') as f:
+with h5py.File('output.h5', 'r') as f:
     group = list(f.keys())
     for key in group:
         print(key)
