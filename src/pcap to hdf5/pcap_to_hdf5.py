@@ -4,7 +4,7 @@ import h5py
 import argparse
 import Device as dv
 
-one_hot_protocol = {"TCP":0, "UDP":1, "HTTP":2}
+
 
 #%% Argument parser
 parser = argparse.ArgumentParser(description="pcap to HDF5. You can use this program to generate data sets for either training or prediction")
@@ -25,6 +25,7 @@ parser.add_argument("-v", "--verbose", action="store_true",
 args = parser.parse_args()
 
 #%% Prepare some variables
+one_hot_protocol = {"TCP":0, "UDP":1, "HTTP":2}
 device = {} # group by source IP
 cap = ps.FileCapture(args.input, only_summaries=True)
 
@@ -101,7 +102,7 @@ if args.label == "pred":
             f.create_dataset(source_IP, data=packet_set)
 
 else:
-    with h5py.File(args.output, 'w') as f:
+    with h5py.File(args.output, "w") as f:
         packet_set = []
         label_set = []
         label = 1 if args.label == "pos" else 0
@@ -112,8 +113,8 @@ else:
                 packet_set.append(temp)
                 label_set.append(label)
 
-        f.create_dataset('packet', data=packet_set)
-        f.create_dataset('label', data=label_set)
+        f.create_dataset("data_x", data=packet_set)
+        f.create_dataset("data_y", data=label_set)
 
 #%% verbose output
 if args.verbose:
