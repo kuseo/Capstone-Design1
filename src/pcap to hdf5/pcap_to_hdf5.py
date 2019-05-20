@@ -25,14 +25,14 @@ parser.add_argument("-v", "--verbose", action="store_true",
 args = parser.parse_args()
 
 #%% Prepare some variables
-one_hot_protocol = {"TCP":0, "UDP":1, "HTTP":2}
+one_hot_protocol = {"TCP":0, "UDP":1, "ICMP":2}
 device = {} # group by source IP
 cap = ps.FileCapture(args.input, only_summaries=True)
 
 #%% Fisrt, extract packet infomations
 for value in cap:
-    # only TCP, UDP, and HTTP protocol
-    if value.protocol != "TCP" and  value.protocol != "UDP" and value.protocol != "HTTP":
+    # only TCP, UDP, and ICMP protocol
+    if value.protocol != "TCP" and  value.protocol != "UDP" and value.protocol != "ICMP":
         continue
 
     # packet info
