@@ -4,7 +4,7 @@ import h5py
 import argparse
 import Device as dv
 
-def change_me(input):
+def preprocessing(input):
     # Prepare some variables
     one_hot_protocol = {"TCP":0, "UDP":1, "ICMP":2}
     device = {} # group by source IP
@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    device = change_me(args.input)
+    device = preprocessing(args.input)
 
     # Store feature datas as HDF5 format
     with h5py.File(args.output, "w") as f:
