@@ -1,4 +1,4 @@
-#%% import some useful modules
+# import some useful modules
 import h5py
 import numpy as np
 from keras import layers
@@ -13,7 +13,7 @@ from k_utils import *
 import keras.backend as K
 
 
-#%% Load datas
+# Load datas
 X_train, Y_train, X_test, Y_test = load_dataset()
 
 print ("number of training examples = " + str(X_train.shape[0]))
@@ -24,7 +24,7 @@ print ("X_test shape: " + str(X_test.shape))
 print ("Y_test shape: " + str(Y_test.shape))
 
 
-#%% 
+# 
 def model(input_shape):
     # 4 hidden layers
     # each layer has 11 hidden units.
@@ -55,7 +55,7 @@ def model(input_shape):
     return model
 
 
-#%% train and test
+# train and test
 DoS_detection_model = model((7))
 
 DoS_detection_model.compile(optimizer='Adam', loss='mean_squared_logarithmic_error', metrics = ["accuracy"])
@@ -66,7 +66,7 @@ preds = DoS_detection_model.evaluate(x = X_test, y = Y_test)
 print ("Loss = " + str(preds[0]))
 print ("Test Accuracy = " + str(preds[1]))
 
-#%% Summerize and Save model
+# Summerize and Save model
 DoS_detection_model.summary()
 plot_model(DoS_detection_model, to_file='DoS_detection_model.png')
 SVG(model_to_dot(DoS_detection_model).create(prog='dot', format='svg'))
