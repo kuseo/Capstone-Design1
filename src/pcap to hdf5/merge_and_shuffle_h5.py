@@ -13,10 +13,10 @@ args=parser.parse_args()
 
 with h5py.File(args.input1, "r") as f1:
     with h5py.File(args.input2, "r") as f2:
-        x1 = f1["data_x"]
-        y1 = f1["data_y"]
-        x2 = f2["data_x"]
-        y2 = f2["data_y"]
+        x1 = list(f1["data_x"])
+        y1 = list(f1["data_y"])
+        x2 = list(f2["data_x"])
+        y2 = list(f2["data_y"])
 
         x = x1.append(x2)
         y = y1.append(y2)
