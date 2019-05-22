@@ -17,7 +17,7 @@ parser.add_argument("-f", "--filter", type=str, default="192.168.137.0/24",
                     help="IP filter like x.x.x.x/x")
 
 args = parser.parse_args()
-DoS_detection_model = load_model("./"+args.model)
+DoS_detection_model = load_model(args.model)
 threshold = 0.5
 
 # main loop
@@ -48,6 +48,6 @@ while True:
 
     # write log
 
-    
+
     # Garbage collect
     del cap, device, pair, device_score, 
