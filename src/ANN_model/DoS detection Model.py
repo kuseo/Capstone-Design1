@@ -48,7 +48,7 @@ def model(input_shape):
     X = Activation("relu")(X)
 
     X = Dense(1, init="uniform", name='fc')(X)
-    X = BatchNormalization(axis=0, name = 'bn0')(X)
+    X = BatchNormalization(axis=0, name = 'bn')(X)
     X = Activation("sigmoid")(X)
 
     model = Model(inputs = X_input, outputs = X, name="DoS_detection_Model")
