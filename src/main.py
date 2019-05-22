@@ -42,9 +42,9 @@ while True:
     for source_IP in device_score:
         score = device_score[source_IP]
         if score > threshold:
-            print("IP :{}\n\tsuspicious\n\t{} of packets are expected to be DoS attack.".format(source_IP, score*100))
+            print("IP :{}\n\tSuspicious\n\t{} % of packets are expected to be DoS attack packets.".format(source_IP, score*100))
         else:
-            print("IP :{}\n\tbenign\n\tIt works well.".format(source_IP))
+            print("IP :{}\n\tBenign\n\tIt works well.".format(source_IP))
 
     # write log
 
