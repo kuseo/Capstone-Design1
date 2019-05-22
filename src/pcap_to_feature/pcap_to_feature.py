@@ -4,16 +4,20 @@ import h5py
 import argparse
 import Device as dv
 
-def preprocessing(input):
+def preprocessing(pcap_input=None, captured_object=None):
     # Prepare some variables
-    one_hot_protocol = {"TCP":0, "UDP":1, "ICMP":2}
+    one_hot_protocol = {"TCP":0, "UDP":1, "HTTP":2}
     device = {} # group by source IP
-    cap = ps.FileCapture(input, only_summaries=True)
+
+    if captured_object is None:
+        cap = ps.FileCapture(pcap_input, only_summaries=True)
+    else:
+        cap = captured_object
 
     # Fisrt, extract packet infomations
     for value in cap:
         # only TCP, UDP, and ICMP protocol
-        if value.protocol != "TCP" and  value.protocol != "UDP" and value.protocol != "ICMP":
+        if value.protocol != "TCP" and  value.protocol != "UDP" and value.protocol != "HTTP":
             continue
 
         # packet info
@@ -78,8 +82,8 @@ if __name__ == "__main__":
     parser.add_argument("input", 
                         help="Input pcap file directory")
 
-    #positive   : benign
-    #negative   : attack
+    #positive   : attack
+    #negative   : benign
     parser.add_argument("-l", "--label", type=str, choices=["pos", "neg"],
                         help="Category of input pcap file. default is neg")
     parser.add_argument("-o", "--output", type=str, default="output.h5",
@@ -90,7 +94,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    device = preprocessing(args.input)
+    device = preprocessing(pcap_input=args.input)
 
     # Store feature datas as HDF5 format
     with h5py.File(args.output, "w") as f:
