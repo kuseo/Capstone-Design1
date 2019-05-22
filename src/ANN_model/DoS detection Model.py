@@ -8,7 +8,7 @@ from keras.utils import layer_utils
 from IPython.display import SVG
 from keras.utils.vis_utils import model_to_dot
 from keras.utils import plot_model
-from k_utils import *
+from k_utils import load_dataset
 
 import keras.backend as K
 
@@ -24,7 +24,7 @@ print ("X_test shape: " + str(X_test.shape))
 print ("Y_test shape: " + str(Y_test.shape))
 
 
-# 
+# ANN model
 def model(input_shape):
     # 4 hidden layers
     # each layer has 11 hidden units.
