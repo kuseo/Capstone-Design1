@@ -34,7 +34,17 @@ def preprocessing(pcap_input=None, captured_object=None):
             device[IP] = dv.Device()
             device[IP].append_packet_info(packet_info)
 
-    # Second, feature engineering
+    # Second, Divide packet datas in 10 sec time window.
+    for source_IP in device:
+        first = device[source_IP].packet_info[0]["time"]
+        for value in device[source_IP].packet_info:
+            current = value["time"]
+            
+            if current - first > 10:
+                first = current
+
+
+    # Third, feature engineering
     for source_IP in device:
         num_of_endpoint = device[source_IP].count_endpoint()
 
