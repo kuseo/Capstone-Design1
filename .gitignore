@@ -19,3 +19,4 @@ src/pcap to hdf5/__pycache__/*.*
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
 .vscode/ipch/ed2139aac02405ab/MAIN.ipch
+src/pcap_to_feature/__pycache__/Device.cpython-37.pyc
