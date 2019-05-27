@@ -32,23 +32,23 @@ def model(input_shape):
     X_input = Input(input_shape)
 
     X = Dense(11, input_shape=(7,), init="uniform", name='fc0')(X_input)
-    X = BatchNormalization(axis=0, name = 'bn0')(X)
+    X = BatchNormalization(axis=1, name = 'bn0')(X)
     X = Activation("relu")(X)
 
     X = Dense(11, init="uniform", name='fc1')(X)
-    X = BatchNormalization(axis=0, name = 'bn1')(X)
+    X = BatchNormalization(axis=1, name = 'bn1')(X)
     X = Activation("relu")(X)
 
     X = Dense(11, init="uniform", name='fc2')(X)
-    X = BatchNormalization(axis=0, name = 'bn2')(X)
+    X = BatchNormalization(axis=1, name = 'bn2')(X)
     X = Activation("relu")(X)
 
     X = Dense(11, init="uniform", name='fc3')(X)
-    X = BatchNormalization(axis=0, name = 'bn3')(X)
+    X = BatchNormalization(axis=1, name = 'bn3')(X)
     X = Activation("relu")(X)
 
     X = Dense(1, init="uniform", name='fc')(X)
-    X = BatchNormalization(axis=0, name = 'bn')(X)
+    X = BatchNormalization(axis=1, name = 'bn')(X)
     X = Activation("sigmoid")(X)
 
     model = Model(inputs = X_input, outputs = X, name="DoS_detection_Model")
@@ -56,10 +56,10 @@ def model(input_shape):
 
 
 # train and test
-DoS_detection_model = model((7))
+DoS_detection_model = model((7,))
 
 DoS_detection_model.compile(optimizer='Adam', loss='mean_squared_logarithmic_error', metrics = ["accuracy"])
-DoS_detection_model.fit(x = X_train, y = Y_train, epochs = 40, batch_size = 16)
+DoS_detection_model.fit(x = X_train, y = Y_train, epochs = 40, batch_size = 128)
 
 preds = DoS_detection_model.evaluate(x = X_test, y = Y_test)
 
