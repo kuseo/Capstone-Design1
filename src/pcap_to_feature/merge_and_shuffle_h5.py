@@ -13,15 +13,16 @@ args=parser.parse_args()
 
 with h5py.File(args.input1, "r") as f1:
     with h5py.File(args.input2, "r") as f2:
-        x1 = list(f1["data_x"])
-        y1 = list(f1["data_y"])
-        x2 = list(f2["data_x"])
-        y2 = list(f2["data_y"])
+        x1 = np.array(f1["data_x"][:])
+        y1 = np.array(f1["data_y"][:])
+        x2 = np.array(f2["data_x"][:])
+        y2 = np.array(f2["data_y"][:])
 
-        x = x1.append(x2)
-        y = y1.append(y2)
+        x = np.append(x1, x2, axis=0)
+        y = np.append(y1, y2, axis=0)
+
         m = x.shape[0] # number of datas
-        mini_batches = []
+
         np.random.seed(0)
         permutation = list(np.random.permutation(m))
         shuffled_x = x[permutation,:]
