@@ -29,62 +29,68 @@ def preprocessing(pcap_input=None, captured_object=None):
         }
         IP = value.source
         if IP in device:
-            device[IP].append_packet_info(packet_info)
+            device[IP].packet_info.append(packet_info)
         else:
             device[IP] = dv.Device()
-            device[IP].append_packet_info(packet_info)
+            device[IP].packet_info.append(packet_info)
 
-    # Second, Divide packet datas in 10 sec time window.
+    # Second, record time slice with 10 sec time window.
     for source_IP in device:
-        first = device[source_IP].packet_info[0]["time"]
+        # initialize time window
+        first = float(device[source_IP].packet_info[0]["time"])
+        start = 0
+
+        index = 0
         for value in device[source_IP].packet_info:
-            current = value["time"]
-            
-            if current - first > 10:
+            current = float(value["time"])
+            if current - first > 10: # 10 sec time window
+                device[source_IP].time_window.append(start) # record time slice
+                
+                # update time slice
                 first = current
+                start = index
+            index = index + 1
+
+        # last slice
+        device[source_IP].time_window.append(start)
+        device[source_IP].time_window.append(index)
 
 
     # Third, feature engineering
     for source_IP in device:
-        num_of_endpoint = device[source_IP].count_endpoint()
+        for i in range(0, len(device[source_IP].time_window) - 1): # loop over time window
+            start = device[source_IP].time_window[i]
+            end = device[source_IP].time_window[i+1]
+            num_of_endpoint = device[source_IP].count_endpoint(start, end)
 
-        # packet info -> feature data
+            index = 0
+            for value in range(start, end): # one time window
+                feature_data = {
+                    "size":int(device[source_IP].packet_info[value]["size"]),
+                    "one_hot_protocol":one_hot_protocol[device[source_IP].packet_info[value]["protocol"]],
+                    "bandwidth":0.0,
+                    "endpoint":num_of_endpoint,
+                    "T1":0.0,
+                    "T2":0.0,
+                    "T3":0.0,
+                }
+                device[source_IP].feature_data.append(feature_data)
 
-        # very first packet
-        feature_data = {
-            "size":int(device[source_IP].packet_info[0]["size"]),
-            "one_hot_protocol":one_hot_protocol[device[source_IP].packet_info[0]["protocol"]],
-            "bandwidth":0.0,
-            "endpoint":num_of_endpoint,
-            "T1":0.0,
-            "T2":0.0,
-            "T3":0.0,
-        }
-        device[source_IP].append_feature_data(feature_data)
+                # delta time, get T1
+                feature_data["T1"] = float(device[source_IP].packet_info[value]["time"]) - float(device[source_IP].packet_info[value - 1]["time"])
+                
+                # delta T1, get T2
+                feature_data["T2"] = feature_data["T1"] - device[source_IP].feature_data[index-1]["T1"]
 
-        index = 1
-        for value in device[source_IP].packet_info[1:]:
-            feature_data = {
-                "size":int(value["size"]),
-                "one_hot_protocol":one_hot_protocol[value["protocol"]],
-                "bandwidth":0.0,
-                "endpoint":num_of_endpoint,
-            }
-            # delta time, get T1
-            feature_data["T1"] = float(device[source_IP].packet_info[index]["time"]) - float(device[source_IP].packet_info[index - 1]["time"])
+                # delta T2, get T3
+                feature_data["T3"] = feature_data["T2"] - device[source_IP].feature_data[index-1]["T2"]
             
-            # delta T1, get T2
-            feature_data["T2"] = feature_data["T1"] - device[source_IP].feature_data[index-1]["T1"]
-
-            # delta T2, get T3
-            feature_data["T3"] = feature_data["T2"] - device[source_IP].feature_data[index-1]["T2"]
-        
-            device[source_IP].append_feature_data(feature_data)
-            index = index + 1
+                device[source_IP].feature_data[index] = feature_data
+                index = index + 1
         # The first three packets have abnormal feature data for T1, T2, T3 since they can not be defined.
         # So we'll gonna drop those three packets.
 
-        return device
+    return device
 
 if __name__ == "__main__":
     # Argument parser
@@ -97,7 +103,7 @@ if __name__ == "__main__":
     parser.add_argument("-l", "--label", type=str, choices=["pos", "neg"],
                         help="Category of input pcap file. default is neg")
     parser.add_argument("-o", "--output", type=str, default="output.h5",
-                        help="Output h5 file")
+                        help="Output file name")
     parser.add_argument("-v", "--verbose", action="store_true",
                     help="Increase verbosity")
 
@@ -121,7 +127,7 @@ if __name__ == "__main__":
         f.create_dataset("data_x", data=packet_set)
         f.create_dataset("data_y", data=label_set)
 
-    #%% verbose output
+    # verbose output
     if args.verbose:
         num_of_packet = 0
         for source_IP in device:
