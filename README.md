@@ -10,7 +10,7 @@
 ![attack](https://github.com/tjrkddnr/Capstone-Design1/blob/master/img/attack.JPG?raw=true)
 
 ## Program Work Flow
-![workflow](https://github.com/tjrkddnr/Capstone-Design1/blob/master/workflow.JPG?raw=true)
+![workflow](https://github.com/tjrkddnr/Capstone-Design1/blob/master/img/workflow.JPG?raw=true)
 
 ### reference
 Machine Learning DDoS Detection for Consumer Internet of Things Devices(Doshi, Apthorpe & Feamster, 2018
