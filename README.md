@@ -4,7 +4,7 @@
 ![env](https://github.com/tjrkddnr/Capstone-Design1/blob/master/img/env.JPG?raw=true)
 
 ## Benign IoT Packet Info
-![device](https://github.com/tjrkddnr/Capstone-Design1/blob/master/img/device%20info.JPG?raw=true)
+![device](https://github.com/tjrkddnr/Capstone-Design1/blob/master/img/device.JPG?raw=true)
 
 ## Attack Packet Info
 ![attack](https://github.com/tjrkddnr/Capstone-Design1/blob/master/img/attack.JPG?raw=true)
